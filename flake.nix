@@ -14,10 +14,9 @@
       inputs.nixpkgs.follows = "nixpkgs-unstable";
     };
 
-    system-manager = {
-      url = "github:numtide/system-manager";
-      inputs.nixpkgs.follows = "nixpkgs-unstable";
-    };
+    # NB: do not override system-manager's nixpkgs input — keeping their pin
+    # lets us hit the cache.numtide.com prebuilt of system-manager-engine.
+    system-manager.url = "github:numtide/system-manager";
 
     devshell = {
       url = "github:numtide/devshell";
@@ -51,8 +50,13 @@
             system=$(${pkgs.nix}/bin/nix eval --raw --impure --expr 'builtins.currentSystem')
             ${pkgs.system-manager}/bin/system-manager switch \
               --flake "github:dfrankland/fwdf#fwdf-$system" --sudo
+
+            # userborn won't rewrite an existing user's shell (the sandbox
+            # provisions dylan with /bin/bash before we run), so force it.
+            sudo usermod -s ${pkgs.fish}/bin/fish dylan
+
             sudo systemctl daemon-reload
-            sudo systemctl restart home-manager-dylan.service || true
+            sudo systemctl restart home-manager-dylan.service
             exec sudo su - dylan
           '';
         };
