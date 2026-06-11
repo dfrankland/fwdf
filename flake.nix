@@ -57,7 +57,17 @@
 
             sudo systemctl daemon-reload
             sudo systemctl restart home-manager-dylan.service
-            exec sudo su - dylan
+
+            # If we have a real tty, drop straight into dylan's session.
+            # Otherwise (e.g. curl | bash, where stdin is a pipe), instruct
+            # the user to do it themselves — an interactive shell with no
+            # tty just exits.
+            if [ -t 0 ]; then
+              exec sudo su - dylan
+            else
+              echo
+              echo "Setup complete. Run 'sudo su - dylan' to enter dylan's session."
+            fi
           '';
         };
 
