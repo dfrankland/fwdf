@@ -98,7 +98,6 @@
                   home = "/home/dylan";
                   createHome = true;
                   shell = "${pkgs.fish}/bin/fish";
-                  openssh.authorizedKeys.keyFiles = [./homelab.pub];
                 };
 
                 systemd.tmpfiles.rules = [
@@ -140,6 +139,7 @@
                   users.dylan = _: {
                     home.stateVersion = "26.05";
                     programs.fish.enable = true;
+                    home.file.".ssh/authorized_keys".source = ./homelab.pub;
                   };
                 };
               })

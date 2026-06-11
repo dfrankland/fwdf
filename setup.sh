@@ -19,5 +19,9 @@ system=$(nix eval --raw --impure --expr "builtins.currentSystem")
 nix run --accept-flake-config "github:numtide/system-manager" -- switch \
   --flake "github:dfrankland/fwdf#fwdf-$system" --sudo
 
-# Drop into dylan's session.
-exec sudo -u dylan -i
+# Make sure the home-manager unit actually runs.
+sudo systemctl restart home-manager-dylan.service || true
+
+# Drop into dylan's session (use `su -` rather than `sudo -i` because
+# `sudo -i` refuses a shell not listed in /etc/shells).
+exec sudo su - dylan
