@@ -1,0 +1,3 @@
+[[commands]]
+package = "alejandra"
+help = "Nix code formatter"
