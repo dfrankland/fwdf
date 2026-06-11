@@ -165,6 +165,10 @@
                   users.dylan = {lib, ...}: {
                     home.stateVersion = "26.05";
                     programs.fish.enable = true;
+                    # Manage ~/.bashrc too so the home-manager profile (and
+                    # fish) lands on PATH for the existing bash session
+                    # trunkapps provisions dylan with.
+                    programs.bash.enable = true;
 
                     # sshd StrictModes rejects a symlinked authorized_keys whose
                     # target lives in /nix/store (group-writable), so copy the
