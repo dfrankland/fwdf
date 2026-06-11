@@ -10,7 +10,7 @@ mountpoint -q /nix || sudo mount --bind /local/nix /nix
 # install nix
 curl -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm
 # shellcheck source=/dev/null
-. /nix/var/nix/profiles/default/etc/profile.d/nix-profile.sh
+. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
 # Activate system-manager: creates dylan, sets up mounts, runs home-manager.
 system=$(nix eval --raw --impure --expr "builtins.currentSystem")
