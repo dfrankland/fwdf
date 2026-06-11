@@ -7,8 +7,10 @@ set -euo pipefail
 sudo mkdir -p /local/nix /nix
 mountpoint -q /nix || sudo mount --bind /local/nix /nix
 
-# install nix
-curl -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm
+# install nix (idempotent — the installer refuses to re-run when /nix/receipt.json exists)
+if [ ! -e /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
+  curl -sSf -L https://install.lix.systems/lix | sh -s -- install --no-confirm
+fi
 # shellcheck source=/dev/null
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
