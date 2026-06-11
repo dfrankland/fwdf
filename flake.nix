@@ -148,10 +148,18 @@
                   useUserPackages = true;
                   backupFileExtension = "bak";
 
-                  users.dylan = _: {
+                  users.dylan = {lib, ...}: {
                     home.stateVersion = "26.05";
                     programs.fish.enable = true;
-                    home.file.".ssh/authorized_keys".source = ./homelab.pub;
+
+                    # sshd StrictModes rejects a symlinked authorized_keys whose
+                    # target lives in /nix/store (group-writable), so copy the
+                    # file out of the store on activation instead of letting
+                    # home.file create a symlink.
+                    home.activation.installAuthorizedKeys = lib.hm.dag.entryAfter ["writeBoundary"] ''
+                      install -d -m 700 "$HOME/.ssh"
+                      install -m 600 ${./homelab.pub} "$HOME/.ssh/authorized_keys"
+                    '';
                   };
                 };
               })
