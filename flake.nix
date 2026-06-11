@@ -90,10 +90,9 @@
                   ];
                 };
 
-                users.groups.dylan.gid = 5000;
+                users.groups.dylan = {};
                 users.users.dylan = {
                   isNormalUser = true;
-                  uid = 5000;
                   group = "dylan";
                   home = "/home/dylan";
                   createHome = true;
