@@ -14,15 +14,8 @@ fi
 # shellcheck source=/dev/null
 . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 
-# Activate system-manager: creates dylan, sets up mounts, runs home-manager.
-system=$(nix eval --raw --impure --expr "builtins.currentSystem")
-nix run --accept-flake-config "github:numtide/system-manager" -- switch \
-  --flake "github:dfrankland/fwdf#fwdf-$system" --sudo
-
-# Pick up any new service definitions and run the home-manager unit.
-sudo systemctl daemon-reload
-sudo systemctl restart home-manager-dylan.service || true
-
-# Drop into dylan's session (use `su -` rather than `sudo -i` because
-# `sudo -i` refuses a shell not listed in /etc/shells).
-exec sudo su - dylan
+# Hand off to the bundled activation script: switch system-manager, force
+# home-manager to run, drop into dylan. Using our flake's `default` package
+# avoids fetching numtide's flake (which has nixConfig that trips the
+# trusted-user check).
+exec nix run "github:dfrankland/fwdf"

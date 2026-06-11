@@ -37,11 +37,24 @@
       perSystem = {
         system,
         pkgs,
+        lib,
         ...
       }: {
         _module.args.pkgs = import inputs.nixpkgs-unstable {
           inherit system;
           overlays = [inputs.devshell.overlays.default];
+        };
+
+        packages = lib.optionalAttrs pkgs.stdenv.isLinux {
+          default = pkgs.writeShellScriptBin "fwdf" ''
+            set -euo pipefail
+            system=$(${pkgs.nix}/bin/nix eval --raw --impure --expr 'builtins.currentSystem')
+            ${pkgs.system-manager}/bin/system-manager switch \
+              --flake "github:dfrankland/fwdf#fwdf-$system" --sudo
+            sudo systemctl daemon-reload
+            sudo systemctl restart home-manager-dylan.service || true
+            exec sudo su - dylan
+          '';
         };
 
         formatter = pkgs.alejandra;
