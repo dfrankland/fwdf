@@ -101,8 +101,19 @@
           inputs.system-manager.lib.makeSystemConfig {
             modules = [
               inputs.home-manager.nixosModules.home-manager
-              ({pkgs, ...}: {
+              ({
+                pkgs,
+                lib,
+                ...
+              }: {
                 nixpkgs.hostPlatform = system;
+
+                # Use the nixpkgs-prebuilt system-manager (cached on
+                # cache.nixos.org) instead of letting lib.nix build it from
+                # source on every activation. Upstream wraps it with `nix` on
+                # PATH; our writeShellScriptBin already sources the nix
+                # profile before invoking it, so the wrapping is redundant.
+                _module.args.system-manager = lib.mkForce pkgs.system-manager;
 
                 # Userborn creates the dylan user declaratively on activation.
                 services.userborn.enable = true;
