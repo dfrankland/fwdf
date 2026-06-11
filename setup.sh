@@ -16,7 +16,7 @@ fi
 
 # Activate system-manager: creates dylan, sets up mounts, runs home-manager.
 system=$(nix eval --raw --impure --expr "builtins.currentSystem")
-nix run "github:numtide/system-manager" -- switch \
+nix run --accept-flake-config "github:numtide/system-manager" -- switch \
   --flake "github:dfrankland/fwdf#fwdf-$system" --sudo
 
 # Drop into dylan's session.

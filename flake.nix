@@ -83,6 +83,12 @@
                 # System-manager configures nix.conf and the daemon, using lix.
                 nix.enable = true;
                 nix.package = pkgs.lix;
+                nix.settings = {
+                  extra-substituters = ["https://cache.numtide.com"];
+                  extra-trusted-public-keys = [
+                    "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+                  ];
+                };
 
                 users.groups.dylan.gid = 5000;
                 users.users.dylan = {
